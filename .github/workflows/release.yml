@@ -1,0 +1,45 @@
+# Safe release workflow template for Nexa
+# This workflow is intentionally MANUAL only.
+# It must never auto-publish unverified builds.
+
+name: Publish Verified Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version_name:
+        description: "versionName (e.g. 1.0.0)"
+        required: true
+      version_code:
+        description: "versionCode (integer)"
+        required: true
+      min_supported:
+        description: "minimumSupportedVersionCode"
+        required: true
+      release_notes:
+        description: "Release notes"
+        required: true
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Safety check
+        run: |
+          echo "This workflow expects a pre-built, already-signed APK to be provided as an artifact or secret path."
+          echo "Do NOT add automatic building + signing here without careful secret handling."
+          echo "Aborting because no verified APK input is configured yet."
+          exit 1
+
+      # Future steps (to be filled only after secure signing pipeline exists):
+      # 1. Download verified signed APK
+      # 2. Validate package name / versionCode
+      # 3. Compute SHA-256
+      # 4. Create GitHub Release
+      # 5. Upload APK as nexa.apk
+      # 6. Update version.json and commit
